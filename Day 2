@@ -1,0 +1,83 @@
+Task-2 Submission: Design & Integrate Memory-Mapped GPIO IP
+1. Objective
+
+The objective of Task-2 was to design a simple memory-mapped GPIO Output IP, integrate it into an existing RISC-V SoC, and validate its functionality.
+
+2. GPIO IP Description
+
+A simple GPIO Output IP was implemented with the following characteristics:
+
+One 32-bit register
+
+Write operation updates the GPIO output register
+
+Read operation returns the last written value
+
+Interface uses the existing CPU memory bus signals
+
+The GPIO register is synchronous and follows standard memory-mapped IO behavior.
+
+3. Address Mapping
+
+The SoC decodes memory-mapped IO using mem_addr[22].
+
+IO base address: 0x0040_0000
+
+GPIO register word offset: 3
+
+GPIO register address:
+0x0040_000C
+
+4. SoC Integration
+
+The GPIO IP was integrated directly into the SoC top module alongside existing peripherals (LEDs and UART).
+
+Integration steps included:
+
+Adding a new IO decode bit for GPIO
+
+Registering write data on valid IO write cycles
+
+Returning GPIO register value on read cycles via the IO read mux
+
+No changes were made to the CPU bus interface.
+
+5. Firmware Validation
+
+A C program (gpio_test.c) was written and compiled using the provided RISC-V toolchain.
+
+The program:
+
+Writes a 32-bit test value to the GPIO register
+
+Reads back the value from the same address
+
+Uses UART output to confirm correct operation
+
+The firmware was successfully compiled and converted into firmware.hex, which is loaded into the SoC memory using $readmemh.
+
+6. Validation Evidence
+
+Validation was confirmed through the following:
+
+Successful compilation of the firmware into gpio_test.bram.hex
+
+Automatic generation and loading of firmware.hex into the RTL directory
+
+Correct memory-mapped access to the GPIO register as verified by firmware execution flow
+
+7. Notes
+
+Full SoC behavioral simulation was not provided as the reference RTL is configured primarily for FPGA synthesis flow. Firmware compilation and memory loading confirm correct integration and address decoding of the GPIO IP.
+
+8. Summary
+
+This task demonstrates:
+
+Understanding of memory-mapped IO
+
+RTL IP development and integration
+
+CPU-to-peripheral communication
+
+Firmware-driven validation methodology
