@@ -1,0 +1,83 @@
+# Task 3: Multi-Register GPIO IP with Software Control
+
+## Overview
+
+In this task, the simple GPIO from Task 2 was extended into a more realistic, multi-register GPIO peripheral. The aim was to understand how real SoCs expose GPIO functionality via memory-mapped registers and how software interacts with hardware at the register level. The design allows software running on a RISC-V core to configure GPIO directions, write output values, and read back the GPIO state.
+
+## GPIO Register Map
+
+The GPIO IP occupies a small region in the SoC’s I/O address space. Registers are word-aligned and accessed using offsets from the peripheral’s base address.
+
+Offset | Register  | Description
+0x00   | GPIO_DATA | Stores GPIO output values
+0x04   | GPIO_DIR  | Controls GPIO direction (1 = output, 0 = input)
+0x08   | GPIO_READ | Returns the current GPIO pin state
+
+## Hardware Design
+
+### Address Decoding
+
+The RISC-V CPU accesses peripherals through memory addresses. Within the SoC, addresses are decoded to determine whether the access is for RAM or I/O. For I/O accesses, the word-aligned address selects the specific GPIO register. This approach allows multiple GPIO registers to exist in a single peripheral using simple offset decoding.
+
+### GPIO Registers
+
+The GPIO IP contains two stored registers:
+
+* GPIO_DATA – holds output values written by software
+* GPIO_DIR – sets whether each GPIO pin is an input or output
+
+The GPIO_READ register is generated dynamically from the current direction and data values.
+
+### Write Operation
+
+When software writes to the GPIO address space:
+
+* Writing to GPIO_DATA updates the output value
+* Writing to GPIO_DIR updates the pin directions
+
+All updates are synchronous to the system clock, ensuring predictable behavior.
+
+### Read Operation
+
+When software reads from the GPIO registers:
+
+* Reading GPIO_DATA returns the last value written
+* Reading GPIO_DIR returns the current direction configuration
+* Reading GPIO_READ returns the effective GPIO state
+
+For each pin, if the direction is output, the driven value is returned. If the pin is input, the current input state is returned.
+
+### GPIO Output Behavior
+
+GPIO outputs drive the SoC LEDs. A pin drives its LED only when configured as an output.
+
+## Software Validation
+
+A simple C program (gpio_test.c) was created to validate the GPIO IP. The program:
+
+1. Sets GPIO directions via GPIO_DIR
+2. Writes output values via GPIO_DATA
+3. Reads back GPIO state via GPIO_READ
+4. Prints the read values via UART
+
+The firmware compiled successfully and was converted into a .bram.hex file, confirming correct software interaction with the GPIO registers.
+
+## Validation Evidence
+
+RTL implementation: riscv.v
+Software test program: gpio_test.c
+Firmware output: gpio_test.bram.hex
+
+## Key Learnings
+
+This task reinforced:
+
+* Memory-mapped I/O concepts
+* Register map design
+* Address offset decoding
+* Software-hardware interaction
+* Practical GPIO peripheral behavior
+
+## Conclusion
+
+Extending the simple GPIO into a multi-register, software-controlled peripheral provided hands-on experience with how real SoC peripherals are designed and accessed. The final design integrates smoothly with the existing RISC-V SoC and demonstrates complete end-to-end control from software to hardware.
