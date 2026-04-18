@@ -1,1 +1,13 @@
-I have created this repository as a daily tracking log of my VSD Internship's progress and numerous technical resources I gained during that time. It contains a comprehensive history of all the activities that I undertook as I went through the VLSI design process, including the creation of (daily) reports documenting what I learned each day, architectural studies and final project submissions. The folders will represent an individual day's extensive learning experience and practical application of professional-grade tools, techniques and processes.
+# I2C Master IP
+
+## Description
+Memory-mapped I2C Master for RISC-V SoC.
+
+## Structure
+- rtl → design
+- software → firmware
+- docs → documentation
+
+## Status
+Task-4 complete
+Task-5 packaged
